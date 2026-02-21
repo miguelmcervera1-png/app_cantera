@@ -1,0 +1,83 @@
+{
+  "@@locale": "en",
+  "appTitle": "La 21",
+  "loginTitle": "Family Portal - La 21",
+  "loginButton": "Sign in with Perico ID",
+  "loginHint": "Enter your Perico ID",
+  "navHome": "Home",
+  "navCarpool": "Carpooling",
+  "navSettings": "Settings",
+  "nextMatch": "Next Match",
+  "seatsAvailable": "{count} seats free",
+  "@seatsAvailable": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "offerRide": "Offer a ride",
+  "requestSeat": "Request seat",
+  "seatRequested": "Seat requested successfully!",
+  "destination": "Destination",
+  "departureTime": "Departure time",
+  "totalSeats": "Total seats",
+  "driverName": "Driver name",
+  "publish": "Publish",
+  "cancel": "Cancel",
+  "vs": "vs",
+  "category": "Category",
+  "location": "Location",
+  "date": "Date",
+  "quickAccess": "Quick Access",
+  "regulations": "Regulations",
+  "language": "Language",
+  "spanish": "Spanish",
+  "english": "English",
+  "logout": "Log out",
+  "logoutConfirm": "Are you sure you want to log out?",
+  "yes": "Yes",
+  "no": "No",
+  "privacyTitle": "Privacy Policy",
+  "privacyBody": "Data Collection: User name and contact data (Email) provided by the club's central authentication system.\n\nLocation Usage: The app does not track in real-time, it only stores static text meeting points.\n\nCarpooling Liability: \"La 21\" acts only as a facilitator. The club is not responsible for incidents during private trips.",
+  "termsTitle": "Terms of Use",
+  "termsBody": "By using this application you agree to the terms and conditions of the La 21 family portal. The carpooling service is a coordination tool between families and does not imply any contractual transport relationship.",
+  "noTripsAvailable": "No trips available",
+  "ridePublished": "Ride published successfully!",
+  "welcomeBack": "Welcome, {name}!",
+  "@welcomeBack": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "selectDestination": "Select destination",
+  "navComms": "Communications",
+  "tabNotices": "Official Notices",
+  "tabSchedule": "My Schedule",
+  "confirmRead": "I have read this",
+  "trainingCancelled": "Training Cancelled",
+  "filterAll": "General",
+  "filterMyTeam": "My Team",
+  "filterAdmin": "Payments",
+  "urgentNotice": "Urgent Notice",
+  "noNotices": "No notices available",
+  "noticeConfirmed": "Read confirmed",
+  "sendNotice": "Send Notice",
+  "adminPanel": "Admin Panel (Mock)",
+  "noticeTitle": "Notice title",
+  "noticeBody": "Notice body",
+  "selectCategory": "Select category",
+  "selectTeam": "Select team",
+  "categoryUrgent": "Urgent",
+  "categoryInfo": "Informative",
+  "categoryCallup": "Call-up",
+  "requiresConfirmation": "Requires read confirmation",
+  "noticeSent": "Notice sent successfully!",
+  "allTeams": "All Teams",
+  "schedule": "Schedule",
+  "noSchedule": "No scheduled events",
+  "training": "Training",
+  "match": "Match"
+}
