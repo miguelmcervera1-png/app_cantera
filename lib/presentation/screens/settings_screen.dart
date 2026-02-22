@@ -17,72 +17,129 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final locale = ref.watch(localeProvider);
+    final auth = ref.watch(authProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.navSettings)),
+      appBar: AppBar(
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/images/espanyol_logo.png',
+              height: 32,
+            ),
+            const SizedBox(width: 8),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(l10n.navSettings,
+                    style: const TextStyle(fontSize: 16)),
+                Text(
+                  auth.userTeam,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: AppTheme.accentGold,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
       body: ListView(
+        padding: const EdgeInsets.only(bottom: 24),
         children: [
           // Language section
           _SectionHeader(title: l10n.language),
-          ListTile(
-            leading: Icon(
-              locale.languageCode == 'es'
-                  ? Icons.radio_button_checked
-                  : Icons.radio_button_unchecked,
-              color: locale.languageCode == 'es'
-                  ? AppTheme.primaryBlue
-                  : null,
+          Card(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                RadioListTile<String>(
+                  title: Text(l10n.spanish),
+                  subtitle: const Text('Español'),
+                  value: 'es',
+                  groupValue: locale.languageCode,
+                  onChanged: (value) {
+                    ref.read(localeProvider.notifier).state =
+                        const Locale('es');
+                  },
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16),
+                    ),
+                  ),
+                ),
+                const Divider(height: 1, indent: 56),
+                RadioListTile<String>(
+                  title: Text(l10n.english),
+                  subtitle: const Text('English'),
+                  value: 'en',
+                  groupValue: locale.languageCode,
+                  onChanged: (value) {
+                    ref.read(localeProvider.notifier).state =
+                        const Locale('en');
+                  },
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(16),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            title: Text(l10n.spanish),
-            subtitle: const Text('Español'),
-            onTap: () {
-              ref.read(localeProvider.notifier).state = const Locale('es');
-            },
           ),
-          ListTile(
-            leading: Icon(
-              locale.languageCode == 'en'
-                  ? Icons.radio_button_checked
-                  : Icons.radio_button_unchecked,
-              color: locale.languageCode == 'en'
-                  ? AppTheme.primaryBlue
-                  : null,
-            ),
-            title: Text(l10n.english),
-            subtitle: const Text('English'),
-            onTap: () {
-              ref.read(localeProvider.notifier).state = const Locale('en');
-            },
-          ),
-
-          const Divider(height: 32),
 
           // Regulations section
           _SectionHeader(title: l10n.regulations),
-          ListTile(
-            leading: const Icon(Icons.privacy_tip_outlined),
-            title: Text(l10n.privacyTitle),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showLegalDialog(
-              context,
-              l10n.privacyTitle,
-              l10n.privacyBody,
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.description_outlined),
-            title: Text(l10n.termsTitle),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showLegalDialog(
-              context,
-              l10n.termsTitle,
-              l10n.termsBody,
+          Card(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                ListTile(
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16),
+                    ),
+                  ),
+                  leading: const Icon(Icons.privacy_tip_outlined),
+                  title: Text(l10n.privacyTitle),
+                  trailing: const Icon(
+                    Icons.chevron_right,
+                    color: AppTheme.textSecondary,
+                  ),
+                  onTap: () => _showLegalDialog(
+                    context,
+                    l10n.privacyTitle,
+                    l10n.privacyBody,
+                  ),
+                ),
+                const Divider(height: 1, indent: 56),
+                ListTile(
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(16),
+                    ),
+                  ),
+                  leading: const Icon(Icons.description_outlined),
+                  title: Text(l10n.termsTitle),
+                  trailing: const Icon(
+                    Icons.chevron_right,
+                    color: AppTheme.textSecondary,
+                  ),
+                  onTap: () => _showLegalDialog(
+                    context,
+                    l10n.termsTitle,
+                    l10n.termsBody,
+                  ),
+                ),
+              ],
             ),
           ),
 
-          const Divider(height: 32),
-
-          // Admin mock panel
+          // Admin panel section
           _SectionHeader(title: l10n.adminPanel),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -93,17 +150,18 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
 
-          const Divider(height: 32),
-
           // Logout
+          const SizedBox(height: 32),
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: FilledButton.icon(
               onPressed: () => _confirmLogout(context, ref, l10n),
               icon: const Icon(Icons.logout),
               label: Text(l10n.logout),
               style: FilledButton.styleFrom(
                 backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 52),
               ),
             ),
           ),
@@ -179,13 +237,23 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-      child: Text(
-        title,
-        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-          color: AppTheme.primaryBlue,
-          fontWeight: FontWeight.bold,
-        ),
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
+      child: Row(
+        children: [
+          Container(
+            width: 4,
+            height: 18,
+            decoration: BoxDecoration(
+              gradient: AppTheme.accentGradient,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            title.toUpperCase(),
+            style: AppTheme.sectionHeaderStyle,
+          ),
+        ],
       ),
     );
   }
@@ -244,8 +312,8 @@ class _AdminPanelSheetState extends ConsumerState<_AdminPanelSheet> {
             Text(
               l10n.adminPanel,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 20),
             TextFormField(
@@ -301,8 +369,8 @@ class _AdminPanelSheetState extends ConsumerState<_AdminPanelSheet> {
                   child: Text(l10n.allTeams),
                 ),
                 ...MockData.teams.map(
-                  (team) =>
-                      DropdownMenuItem(value: team, child: Text(team)),
+                  (team) => DropdownMenuItem(
+                      value: team, child: Text(team)),
                 ),
               ],
               onChanged: (v) => setState(() => _targetTeam = v!),
@@ -312,7 +380,8 @@ class _AdminPanelSheetState extends ConsumerState<_AdminPanelSheet> {
               contentPadding: EdgeInsets.zero,
               title: Text(l10n.requiresConfirmation),
               value: _requiresConfirmation,
-              onChanged: (v) => setState(() => _requiresConfirmation = v),
+              onChanged: (v) =>
+                  setState(() => _requiresConfirmation = v),
             ),
             const SizedBox(height: 12),
             FilledButton.icon(

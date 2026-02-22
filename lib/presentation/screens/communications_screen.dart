@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:app_cantera/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/theme/app_theme.dart';
+import '../../domain/providers/auth_provider.dart';
 import '../../domain/providers/notice_provider.dart';
 import '../widgets/notice_card.dart';
 
@@ -13,19 +15,50 @@ class CommunicationsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final filter = ref.watch(noticeFilterProvider);
     final notices = ref.watch(filteredNoticesProvider);
+    final auth = ref.watch(authProvider);
 
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(l10n.navComms),
+          title: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(
+                'assets/images/espanyol_logo.png',
+                height: 32,
+              ),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(l10n.navComms, style: const TextStyle(fontSize: 16)),
+                  Text(
+                    auth.userTeam,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: AppTheme.accentGold,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
           bottom: TabBar(
             labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: Colors.white,
+            unselectedLabelColor: Colors.white60,
+            labelStyle: const TextStyle(
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+            ),
+            indicatorColor: AppTheme.accentGold,
+            indicatorWeight: 3,
+            indicatorSize: TabBarIndicatorSize.label,
             tabs: [
-              Tab(text: l10n.tabNotices),
-              Tab(text: l10n.tabSchedule),
+              Tab(text: l10n.tabNotices.toUpperCase()),
+              Tab(text: l10n.tabSchedule.toUpperCase()),
             ],
           ),
         ),
@@ -39,74 +72,116 @@ class CommunicationsScreen extends ConsumerWidget {
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
                   child: Row(
                     children: [
-                      _FilterChipWidget(
-                        label: l10n.filterAll,
+                      FilterChip(
+                        label: Text(l10n.filterAll),
                         selected: filter == NoticeFilter.all,
-                        onSelected:
-                            () =>
-                                ref.read(noticeFilterProvider.notifier).state =
-                                    NoticeFilter.all,
+                        onSelected: (_) =>
+                            ref.read(noticeFilterProvider.notifier).state =
+                                NoticeFilter.all,
+                        showCheckmark: false,
+                        selectedColor: AppTheme.primaryBlue,
+                        labelStyle: TextStyle(
+                          color: filter == NoticeFilter.all
+                              ? Colors.white
+                              : AppTheme.textSecondary,
+                          fontWeight: filter == NoticeFilter.all
+                              ? FontWeight.w600
+                              : FontWeight.w400,
+                          fontSize: 13,
+                        ),
                       ),
                       const SizedBox(width: 8),
-                      _FilterChipWidget(
-                        label: l10n.filterMyTeam,
+                      FilterChip(
+                        label: Text(l10n.filterMyTeam),
                         selected: filter == NoticeFilter.myTeam,
-                        onSelected:
-                            () =>
-                                ref.read(noticeFilterProvider.notifier).state =
-                                    NoticeFilter.myTeam,
+                        onSelected: (_) =>
+                            ref.read(noticeFilterProvider.notifier).state =
+                                NoticeFilter.myTeam,
+                        showCheckmark: false,
+                        selectedColor: AppTheme.primaryBlue,
+                        labelStyle: TextStyle(
+                          color: filter == NoticeFilter.myTeam
+                              ? Colors.white
+                              : AppTheme.textSecondary,
+                          fontWeight: filter == NoticeFilter.myTeam
+                              ? FontWeight.w600
+                              : FontWeight.w400,
+                          fontSize: 13,
+                        ),
                       ),
                       const SizedBox(width: 8),
-                      _FilterChipWidget(
-                        label: l10n.filterAdmin,
+                      FilterChip(
+                        label: Text(l10n.filterAdmin),
                         selected: filter == NoticeFilter.admin,
-                        onSelected:
-                            () =>
-                                ref.read(noticeFilterProvider.notifier).state =
-                                    NoticeFilter.admin,
+                        onSelected: (_) =>
+                            ref.read(noticeFilterProvider.notifier).state =
+                                NoticeFilter.admin,
+                        showCheckmark: false,
+                        selectedColor: AppTheme.primaryBlue,
+                        labelStyle: TextStyle(
+                          color: filter == NoticeFilter.admin
+                              ? Colors.white
+                              : AppTheme.textSecondary,
+                          fontWeight: filter == NoticeFilter.admin
+                              ? FontWeight.w600
+                              : FontWeight.w400,
+                          fontSize: 13,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 // Notices list
                 Expanded(
-                  child:
-                      notices.isEmpty
-                          ? Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
+                  child: notices.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CircleAvatar(
+                                radius: 44,
+                                backgroundColor: AppTheme.surfaceLight,
+                                child: Icon(
                                   Icons.notifications_off_outlined,
-                                  size: 64,
-                                  color: Colors.grey[400],
+                                  size: 48,
+                                  color: AppTheme.primaryBlue
+                                      .withValues(alpha: 0.3),
                                 ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  l10n.noNotices,
-                                  style: TextStyle(color: Colors.grey[500]),
-                                ),
-                              ],
-                            ),
-                          )
-                          : ListView.builder(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            itemCount: notices.length,
-                            itemBuilder: (context, index) {
-                              final notice = notices[index];
-                              return NoticeCard(
-                                notice: notice,
-                                onConfirmRead: () {
-                                  ref
-                                      .read(noticeProvider.notifier)
-                                      .confirmRead(notice.noticeId);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(l10n.noticeConfirmed)),
-                                  );
-                                },
-                              );
-                            },
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                l10n.noNotices,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.copyWith(
+                                      color: AppTheme.textSecondary,
+                                    ),
+                              ),
+                            ],
                           ),
+                        )
+                      : ListView.builder(
+                          padding:
+                              const EdgeInsets.only(top: 8, bottom: 16),
+                          itemCount: notices.length,
+                          itemBuilder: (context, index) {
+                            final notice = notices[index];
+                            return NoticeCard(
+                              notice: notice,
+                              onConfirmRead: () {
+                                ref
+                                    .read(noticeProvider.notifier)
+                                    .confirmRead(notice.noticeId);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content:
+                                          Text(l10n.noticeConfirmed)),
+                                );
+                              },
+                            );
+                          },
+                        ),
                 ),
               ],
             ),
@@ -120,36 +195,14 @@ class CommunicationsScreen extends ConsumerWidget {
   }
 }
 
-class _FilterChipWidget extends StatelessWidget {
-  final String label;
-  final bool selected;
-  final VoidCallback onSelected;
-
-  const _FilterChipWidget({
-    required this.label,
-    required this.selected,
-    required this.onSelected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return FilterChip(
-      label: Text(label),
-      selected: selected,
-      onSelected: (_) => onSelected(),
-      showCheckmark: false,
-    );
-  }
-}
-
 class _ScheduleTab extends ConsumerWidget {
   const _ScheduleTab();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
 
-    // Mock schedule data
     final scheduleItems = [
       _ScheduleItem(
         day: 'Lunes / Monday',
@@ -180,33 +233,90 @@ class _ScheduleTab extends ConsumerWidget {
     return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: scheduleItems.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 8),
+      separatorBuilder: (_, __) => const SizedBox(height: 10),
       itemBuilder: (context, index) {
         final item = scheduleItems[index];
         final isMatch = item.type == l10n.match;
+        final itemColor = isMatch ? Colors.orange : AppTheme.primaryBlue;
 
         return Card(
+          clipBehavior: Clip.antiAlias,
           margin: EdgeInsets.zero,
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundColor:
-                  isMatch ? Colors.orange.shade100 : Colors.blue.shade50,
-              child: Icon(
-                isMatch ? Icons.sports_soccer : Icons.fitness_center,
-                color: isMatch ? Colors.orange : Colors.blue,
-              ),
-            ),
-            title: Text(
-              item.day,
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-            subtitle: Text('${item.time} · ${item.location}'),
-            trailing: Chip(
-              label: Text(
-                item.type,
-                style: const TextStyle(fontSize: 11),
-              ),
-              visualDensity: VisualDensity.compact,
+          child: IntrinsicHeight(
+            child: Row(
+              children: [
+                // Left accent strip
+                Container(
+                  width: 5,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: isMatch
+                          ? [Colors.orange, Colors.orange.shade300]
+                          : [AppTheme.primaryBlue, AppTheme.lightBlue],
+                    ),
+                  ),
+                ),
+                // Icon
+                Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: CircleAvatar(
+                    radius: 20,
+                    backgroundColor: itemColor.withValues(alpha: 0.1),
+                    child: Icon(
+                      isMatch ? Icons.sports_soccer : Icons.fitness_center,
+                      color: itemColor,
+                    ),
+                  ),
+                ),
+                // Text content
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          item.day,
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: AppTheme.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${item.time} \u00B7 ${item.location}',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: AppTheme.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Type badge
+                Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: Chip(
+                    label: Text(
+                      item.type.toUpperCase(),
+                      style: TextStyle(
+                        color: itemColor,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 10,
+                        letterSpacing: 0.8,
+                      ),
+                    ),
+                    backgroundColor: itemColor.withValues(alpha: 0.1),
+                    side: BorderSide.none,
+                    padding: EdgeInsets.zero,
+                    visualDensity: VisualDensity.compact,
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                ),
+              ],
             ),
           ),
         );
